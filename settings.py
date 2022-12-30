@@ -8,7 +8,7 @@ white_checker = load("png/white.png")
 white_queen_checker = load("png/white_queen.png")
 white_checker_small = load("png/white_small.png")
 
-# field = [
+# checker_field = [
 #     [0, 2, 0, 2, 0, 2, 0, 2],
 #     [2, 0, 2, 0, 2, 0, 2, 0],
 #     [0, 2, 0, 2, 0, 2, 0, 2],
@@ -19,7 +19,7 @@ white_checker_small = load("png/white_small.png")
 #     [1, 0, 1, 0, 1, 0, 1, 0],
 # ]
 
-field = [
+checker_field = [
     # 0  1  2  3  4  5  6  7
     [0, 0, 0, 0, 0, 0, 0, 0],  # 0
     [0, 0, 0, 0, 0, 0, 2, 0],  # 1

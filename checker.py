@@ -1,7 +1,7 @@
 from typing import List, Tuple
 from pygame.color import THECOLORS
 
-from settings import field
+from settings import checker_field
 
 
 class Checker:
@@ -63,11 +63,7 @@ class Checkers:
         """
         Placement of checkers
         """
-        self.checkers = self.generate_checkers(field)
-        # for y in [0, 1, 2, 5, 6, 7]:
-        #     for x in range(8):
-        #         if (x + y) % 2:
-        #             self.checkers.append(Checker(x, y, 2 if y < 3 else 1))
+        self.checkers = self.generate_checkers(checker_field)
 
     @staticmethod
     def generate_checkers(field) -> list:
@@ -76,6 +72,10 @@ class Checkers:
             for column in range(8):
                 if field[row][column] in (1, 2):
                     checkers.append(Checker(column, row, field[row][column], True))
+        # for y in [0, 1, 2, 5, 6, 7]:
+        #     for x in range(8):
+        #         if (x + y) % 2:
+        #             checkers.append(Checker(x, y, 2 if y < 3 else 1))
         return checkers[:]
 
     def get_field(self) -> tuple:
