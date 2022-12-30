@@ -41,6 +41,7 @@ class Game:
         self.font = None
         self.button = 0
         self.is_start = False
+        self.is_bot = False
 
     def restart(self):
         self.checkers = Checkers()
@@ -48,6 +49,7 @@ class Game:
         self.turn = 1  # starting white
         self.can_eat_again = False
         self.turn_number = [0, 24]
+        self.change_menu_status()
 
     def events(self):
         for event in pygame.event.get():
@@ -60,12 +62,14 @@ class Game:
                     # self.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.button = event.button
-                if not self.is_menu:
+                if not self.is_menu and (self.is_bot and self.turn == 1 or not self.is_bot):
                     self.event_click()
             else:
                 self.button = 0
             if event.type == pygame.MOUSEMOTION:
                 self.mouse_x, self.mouse_y = event.pos
+        if self.is_bot:
+            pass
 
     def event_click(self):
         mouse_x, mouse_y = self.mouse_x // 64, self.mouse_y // 64
@@ -88,6 +92,14 @@ class Game:
     def change_menu_status(self):
         self.is_menu = not self.is_menu
         self.is_start = True
+
+    def play_with_bot(self):
+        self.is_bot = True
+        self.change_menu_status()
+
+    def play_with_friend(self):
+        self.is_bot = False
+        self.change_menu_status()
 
     def change_turn(self):
         self.turn = 2 if self.turn == 1 else 1
@@ -180,17 +192,21 @@ class Game:
             self.screen.blit(self.turns[1], (80 + i * 10, 600))
 
     def render_menu(self):
+        cur_menu_rects = menu_rects if self.is_start else menu_rects[2:]
+        dlt_y = 0 if self.is_start else -70
 
-        for cell, method, text, pos in (menu_rects if self.is_start else menu_rects[1:]):
-            if self.button == 1 and cell.collidepoint(self.mouse_x, self.mouse_y) and method:
+        for cell, method, text, pos in cur_menu_rects:
+            if self.button == 1 and cell.collidepoint(self.mouse_x, self.mouse_y - dlt_y) and method:
 
                 self.__getattribute__(method)()
 
+            cell.y = cell.y + dlt_y
             pygame.draw.rect(
                 self.screen, THECOLORS["grey"], cell, 0 if cell.collidepoint(self.mouse_x, self.mouse_y) else 1
             )
+            cell.y = cell.y - dlt_y
 
-            self.screen.blit(self.font.render(text, True, THECOLORS["black"]), pos)
+            self.screen.blit(self.font.render(text, True, THECOLORS["black"]), (pos[0], pos[1] + dlt_y))
 
     def check_win(self):
         whites = self.checkers.get_whites()
