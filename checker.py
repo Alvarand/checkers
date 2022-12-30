@@ -232,3 +232,6 @@ class Checkers:
 
     def __iter__(self):
         return iter(self.checkers)
+
+    def __len__(self):
+        return len(self.checkers)
