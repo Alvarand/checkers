@@ -29,6 +29,7 @@ class Game:
             1: white_checker_small,
             2: black_checker_small
         }
+        self.turn_number = [0, 24]  # [turn_number, total_amount_of_checkers]
         self.clock = pygame.time.Clock()
         self.can_eat_again = False
         self.wins = {
@@ -46,6 +47,7 @@ class Game:
         self.clicked = [False, Checker(-1, -1, -1)]
         self.turn = 1  # starting white
         self.can_eat_again = False
+        self.turn_number = [0, 24]
 
     def events(self):
         for event in pygame.event.get():
@@ -89,6 +91,11 @@ class Game:
 
     def change_turn(self):
         self.turn = 2 if self.turn == 1 else 1
+        if self.turn_number[1] > len(self.checkers):
+            self.turn_number[0] = 0
+            self.turn_number[1] = len(self.checkers)
+        else:
+            self.turn_number[0] += 0.5
 
     def move(self, mouse_x: int, mouse_y: int):
         all_moves = self.checkers.get_moves(self.clicked[1])
@@ -193,6 +200,8 @@ class Game:
             self.restart()
         if not len(blacks) or not len(self.checkers.all_turns(2)):
             self.wins[1] += 1
+            self.restart()
+        if self.turn_number[0] >= 19:
             self.restart()
 
     def run(self):
