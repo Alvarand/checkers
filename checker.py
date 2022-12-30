@@ -71,7 +71,7 @@ class Checkers:
         for row in range(8):
             for column in range(8):
                 if field[row][column] in (1, 2):
-                    checkers.append(Checker(column, row, field[row][column], True))
+                    checkers.append(Checker(column, row, field[row][column]))
         # for y in [0, 1, 2, 5, 6, 7]:
         #     for x in range(8):
         #         if (x + y) % 2:
@@ -118,7 +118,6 @@ class Checkers:
         """
         Eat checker
         """
-        # self.all_field.append(self.checkers)
         self.checkers.remove(checker)
 
     def eat(self, field: tuple, x: int, y: int, color: int) -> Tuple[Tuple[int, int, Any, bool, Checker], ...]:
