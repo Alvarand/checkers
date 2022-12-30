@@ -82,25 +82,16 @@ class Game:
                 self.move(mouse_x, mouse_y)
         elif self.button == 3 and not self.can_eat_again:
             self.clicked[0] = False
-        if self.button == 3:
-            self.move_back()
 
     def change_menu_status(self):
         self.is_menu = not self.is_menu
         self.is_start = True
-
-    def move_back(self):
-        if len(self.checkers.all_field):
-            self.checkers.checkers = self.checkers.all_field[-1]
-            self.checkers.all_field = []
-            self.change_turn()
 
     def change_turn(self):
         self.turn = 2 if self.turn == 1 else 1
 
     def move(self, mouse_x: int, mouse_y: int):
         all_moves = self.checkers.get_moves(self.clicked[1])
-        self.checkers.all_field.append(self.checkers.generate_checkers(self.checkers.get_field()))
         for x, y, color, is_eat, eat_checker in all_moves:
             if x != mouse_x or y != mouse_y:
                 continue

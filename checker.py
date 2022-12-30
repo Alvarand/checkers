@@ -57,7 +57,6 @@ class Checkers:
     def __init__(self):
         self.checkers: List[Checker] = []
         self.init()
-        self.all_field = []
 
     def init(self):
         """
