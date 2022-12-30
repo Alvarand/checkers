@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Any, Union
 from pygame.color import THECOLORS
 
 from settings import checker_field
@@ -39,7 +39,7 @@ class Checker:
         if self.color == 2 and self.y == 7:
             self.is_queen = True
 
-    def get_params(self) -> tuple:
+    def get_params(self) -> Tuple[int, int, int]:
         """
         Return params of checker: (x_position, y_position, side_of_move)
         """
@@ -66,7 +66,7 @@ class Checkers:
         self.checkers = self.generate_checkers(checker_field)
 
     @staticmethod
-    def generate_checkers(field) -> list:
+    def generate_checkers(field) -> List[Checker]:
         checkers = []
         for row in range(8):
             for column in range(8):
@@ -78,7 +78,7 @@ class Checkers:
         #             checkers.append(Checker(x, y, 2 if y < 3 else 1))
         return checkers[:]
 
-    def get_field(self) -> tuple:
+    def get_field(self) -> Tuple[List[int]]:
         """
         Return arrangement of checker's
         """
@@ -87,17 +87,17 @@ class Checkers:
             field[checker.y][checker.x] = checker.color
         return tuple(field)
 
-    def get_whites(self) -> tuple:
+    def get_whites(self) -> Tuple[Checker]:
         """
         Return white checkers
         """
-        return tuple(filter(lambda x: x.color == 1, self))
+        return tuple(filter(lambda x: x.color == 1, self.checkers))
 
-    def get_blacks(self) -> tuple:
+    def get_blacks(self) -> Tuple[Checker]:
         """
         Return black checkers
         """
-        return tuple(filter(lambda x: x.color == 2, self))
+        return tuple(filter(lambda x: x.color == 2, self.checkers))
 
     def get_checker(self, x: int, y: int) -> Checker:
         """
@@ -121,7 +121,7 @@ class Checkers:
         # self.all_field.append(self.checkers)
         self.checkers.remove(checker)
 
-    def eat(self, field: tuple, x: int, y: int, color: int) -> tuple:
+    def eat(self, field: tuple, x: int, y: int, color: int) -> Tuple[Tuple[int, int, Any, bool, Checker], ...]:
         eat_color = 2 if color == 1 else 1
         eat_moves = []
         for i in [-1, 1]:
@@ -134,7 +134,7 @@ class Checkers:
         return tuple(eat_moves)
 
     def eat_queen(self, field: tuple, x: int, y: int, color: int, again: bool = False, i_prev: int = 0,
-                  j_prev: int = 0) -> tuple:
+                  j_prev: int = 0) -> Tuple[Tuple[int, int, Any, bool, Checker], ...]:
         eat_color = 2 if color == 1 else 1
         eat_moves = []
         for i in [-1, 1]:
@@ -168,7 +168,7 @@ class Checkers:
                     eat_moves.extend(temp_moves)
         return tuple(eat_moves)
 
-    def move(self, field: tuple, x: int, y: int, move: int) -> tuple:
+    def move(self, field: tuple, x: int, y: int, move: int) -> Tuple[Tuple[int, int, Any, bool, None], ...]:
         moves = []
         for i in [-1, 1]:
             cur_x, cur_y = x + i, y + move
@@ -176,7 +176,7 @@ class Checkers:
                 moves.append((cur_x, cur_y, THECOLORS["blue"], False, None))
         return tuple(moves)
 
-    def move_queen(self, field: tuple, x: int, y: int) -> tuple:
+    def move_queen(self, field: tuple, x: int, y: int) -> Tuple[Tuple[int, int, Any, bool, None], ...]:
         moves = []
         for i in [-1, 1]:
             for j in [-1, 1]:
@@ -188,7 +188,7 @@ class Checkers:
                         break
         return tuple(moves)
 
-    def get_moves(self, checker: Checker) -> tuple:
+    def get_moves(self, checker: Checker) -> Tuple[Tuple[int, int, Any, bool, Any], ...]:
         x, y, move = checker.get_params()
         field = self.get_field()
         if checker.is_queen:
@@ -201,7 +201,7 @@ class Checkers:
             return eat_moves[:]
         return tuple(moves)
 
-    def must_move(self, color: int) -> tuple:
+    def must_move(self, color: int) -> Tuple[Checker]:
         checkers = self.get_whites() if color == 1 else self.get_blacks()
         checker_with_move = []
         for checker in checkers:
@@ -213,7 +213,7 @@ class Checkers:
                 checker_with_move.append(checker)
         return tuple(checker_with_move)
 
-    def all_turns(self, color: int) -> tuple:
+    def all_turns(self, color: int) -> Tuple[Union[Checker, Tuple[Tuple[int, int, Any, bool, Checker], ...]], ...]:
         checkers = self.get_whites() if color == 1 else self.get_blacks()
         checker_with_move = []
         for checker in checkers:
