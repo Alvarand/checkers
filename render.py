@@ -44,12 +44,15 @@ class Game:
         self.is_start = False
         self.is_bot = False
 
-    def restart(self):
+    def init(self):
         self.checkers = Checkers()
         self.clicked = [False, Checker(-1, -1, -1)]
         self.turn = 1  # starting white
         self.can_eat_again = False
         self.turn_number = [0, 24]
+
+    def restart(self):
+        self.init()
         self.change_menu_status()
 
     def events(self):
@@ -135,9 +138,13 @@ class Game:
             self.clicked[1] = checker
             x, y, *_ = choice(self.checkers.get_moves(checker))
             self.move(x, y)
-        else:
-            checker = choice(
-                tuple(checker for checker in self.checkers.get_blacks() if len(self.checkers.get_moves(checker))))
+            return
+        checkers = self.checkers.get_whites() if self.turn == 1 else self.checkers.get_blacks()
+        checkers_with_move = tuple(
+            checker for checker in checkers if len(self.checkers.get_moves(checker))
+        )
+        if len(checkers_with_move):
+            checker = choice(checkers_with_move)
             self.clicked[1] = checker
             x, y, *_ = choice(self.checkers.get_moves(checker))
             self.move(x, y)
@@ -227,12 +234,12 @@ class Game:
         blacks = self.checkers.get_blacks()
         if not len(whites) or not len(self.checkers.all_turns(1)):
             self.wins[2] += 1
-            self.restart()
+            self.init()
         if not len(blacks) or not len(self.checkers.all_turns(2)):
             self.wins[1] += 1
-            self.restart()
+            self.init()
         if self.turn_number[0] >= 19:
-            self.restart()
+            self.init()
 
     def run(self):
         pygame.init()
