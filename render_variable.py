@@ -5,7 +5,8 @@ field_rects = [
 ]
 menu_rects = [
     (pygame.Rect(106, 155, 300, 50), "change_menu_status", "Continue", (200, 165)),
-    (pygame.Rect(106, 225, 300, 50), "", "Play with computer", (160, 235)),
-    (pygame.Rect(106, 295, 300, 50), "change_menu_status", "Play with friend", (180, 305)),
-    (pygame.Rect(106, 365, 300, 50), "exit", "Exit", (230, 375)),
+    (pygame.Rect(106, 225, 300, 50), "restart", "Restart", (200, 235)),
+    (pygame.Rect(106, 295, 300, 50), "play_with_bot", "Play with computer", (160, 305)),
+    (pygame.Rect(106, 365, 300, 50), "play_with_friend", "Play with friend", (180, 375)),
+    (pygame.Rect(106, 435, 300, 50), "exit", "Exit", (230, 445)),
 ]
