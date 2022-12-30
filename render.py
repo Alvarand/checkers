@@ -1,5 +1,6 @@
 import pygame
 import sys
+from random import choice
 from pygame.color import THECOLORS
 from settings import (
     white_queen_checker,
@@ -68,8 +69,8 @@ class Game:
                 self.button = 0
             if event.type == pygame.MOUSEMOTION:
                 self.mouse_x, self.mouse_y = event.pos
-        if self.is_bot:
-            pass
+        if self.is_bot and self.turn == 2:
+            self.bot_move()
 
     def event_click(self):
         mouse_x, mouse_y = self.mouse_x // 64, self.mouse_y // 64
@@ -126,6 +127,20 @@ class Game:
                 self.clicked[0] = False
                 self.change_turn()
             break
+
+    def bot_move(self):
+        checker_with_move = self.checkers.must_move(self.turn)
+        if len(checker_with_move):
+            checker = choice(checker_with_move)
+            self.clicked[1] = checker
+            x, y, *_ = choice(self.checkers.get_moves(checker))
+            self.move(x, y)
+        else:
+            checker = choice(
+                tuple(checker for checker in self.checkers.get_blacks() if len(self.checkers.get_moves(checker))))
+            self.clicked[1] = checker
+            x, y, *_ = choice(self.checkers.get_moves(checker))
+            self.move(x, y)
 
     def render_all(self):
         self.screen.fill(THECOLORS.get("white"))
@@ -197,7 +212,6 @@ class Game:
 
         for cell, method, text, pos in cur_menu_rects:
             if self.button == 1 and cell.collidepoint(self.mouse_x, self.mouse_y - dlt_y) and method:
-
                 self.__getattribute__(method)()
 
             cell.y = cell.y + dlt_y
