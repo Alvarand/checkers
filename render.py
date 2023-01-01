@@ -25,8 +25,8 @@ class Game(CheckersLogic):
         self.running = True
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         self.turns = {
-            1: white_checker_small,
-            2: black_checker_small
+            1: (white_checker_small, self.checkers.get_whites),
+            2: (black_checker_small, self.checkers.get_blacks)
         }
         self.clock = pygame.time.Clock()
         self.wins = {
@@ -137,7 +137,7 @@ class Game(CheckersLogic):
 
     def render_details(self):
         pygame.draw.rect(self.screen, THECOLORS["grey"], pygame.Rect(0, 512, 512, 128), 0)
-        self.screen.blit(self.turns[self.turn], (220, 560))
+        self.screen.blit(self.turns[self.turn][0], (220, 560))
 
         texts = [
             (self.font.render("Eaten", True, THECOLORS["black"]), (10, 520)),
@@ -152,11 +152,9 @@ class Game(CheckersLogic):
         for text, pos in texts:
             self.screen.blit(text, pos)
 
-        for i in range(12 - len(self.checkers.get_blacks())):
-            self.screen.blit(self.turns[2], (80 + i * 10, 560))
-
-        for i in range(12 - len(self.checkers.get_whites())):
-            self.screen.blit(self.turns[1], (80 + i * 10, 600))
+        for checker, func in self.turns.values():
+            for i in range(12 - len(func())):
+                self.screen.blit(checker, (80 + i * 10, 560))
 
     def render_menu(self):
         cur_menu_rects = menu_rects if self.is_start else menu_rects[2:]
