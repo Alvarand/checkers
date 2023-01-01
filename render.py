@@ -69,7 +69,9 @@ class Game(CheckersLogic):
                 self.button = event.button
                 if not self.is_menu and (self.is_bot and self.turn == 1 or not self.is_bot):
                     self.event_click()
-            if event.type == pygame.MOUSEBUTTONUP:
+            elif self.is_menu:
+                self.button = 0
+            elif event.type == pygame.MOUSEBUTTONUP:
                 self.button = 0
                 self.event_click()
                 self.clicked = [False, Checker(-1, -1, -1)]
