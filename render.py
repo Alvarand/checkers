@@ -1,6 +1,5 @@
 import pygame
 import sys
-from random import choice
 from pygame.color import THECOLORS
 from settings import (
     white_queen_checker,
@@ -13,46 +12,48 @@ from settings import (
 from render_variable import (
     menu_rects, field_rects
 )
-from checker import Checker, Checkers
+from checker import Checker
+from logic import CheckersLogic
 
 
-class Game:
+class Game(CheckersLogic):
 
     def __init__(self, width: int, height: int):
-        self.checkers = Checkers()
+        super().__init__()
         self.WIDTH = width
         self.HEIGHT = height
         self.running = True
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
-        self.clicked = [False, Checker(-1, -1, -1)]
-        self.turn = 1  # starting white
         self.turns = {
             1: white_checker_small,
             2: black_checker_small
         }
-        self.turn_number = [0, 24]  # [turn_number, total_amount_of_checkers]
         self.clock = pygame.time.Clock()
-        self.can_eat_again = False
         self.wins = {
             1: 0,
             2: 0
         }
-        self.is_menu = True
         self.mouse_x = self.mouse_y = 0
         self.font = None
         self.button = 0
+        self.is_menu = True
         self.is_start = False
         self.is_bot = False
 
-    def init(self):
-        self.checkers = Checkers()
-        self.clicked = [False, Checker(-1, -1, -1)]
-        self.turn = 1  # starting white
-        self.can_eat_again = False
-        self.turn_number = [0, 24]
-
     def restart(self):
-        self.init()
+        super().__init__()
+        self.change_menu_status()
+
+    def change_menu_status(self):
+        self.is_menu = not self.is_menu
+        self.is_start = True
+
+    def play_with_bot(self):
+        self.is_bot = True
+        self.change_menu_status()
+
+    def play_with_friend(self):
+        self.is_bot = False
         self.change_menu_status()
 
     def events(self):
@@ -92,62 +93,6 @@ class Game:
                 self.move(mouse_x, mouse_y)
         elif self.button == 3 and not self.can_eat_again:
             self.clicked[0] = False
-
-    def change_menu_status(self):
-        self.is_menu = not self.is_menu
-        self.is_start = True
-
-    def play_with_bot(self):
-        self.is_bot = True
-        self.change_menu_status()
-
-    def play_with_friend(self):
-        self.is_bot = False
-        self.change_menu_status()
-
-    def change_turn(self):
-        self.turn = 2 if self.turn == 1 else 1
-        if self.turn_number[1] > len(self.checkers):
-            self.turn_number[0] = 0
-            self.turn_number[1] = len(self.checkers)
-        else:
-            self.turn_number[0] += 0.5
-
-    def move(self, mouse_x: int, mouse_y: int):
-        all_moves = self.checkers.get_moves(self.clicked[1])
-        for x, y, color, is_eat, eat_checker in all_moves:
-            if x != mouse_x or y != mouse_y:
-                continue
-            self.clicked[1].move(x, y)
-            if is_eat:
-                self.checkers.eat_checker(eat_checker)
-                all_moves = self.checkers.get_moves(self.clicked[1])
-                if len(all_moves):
-                    self.can_eat_again = all_moves[0][3]
-                else:
-                    self.can_eat_again = False
-            if not self.can_eat_again:
-                self.clicked[0] = False
-                self.change_turn()
-            break
-
-    def bot_move(self):
-        checker_with_move = self.checkers.must_move(self.turn)
-        if len(checker_with_move):
-            checker = choice(checker_with_move)
-            self.clicked[1] = checker
-            x, y, *_ = choice(self.checkers.get_moves(checker))
-            self.move(x, y)
-            return
-        checkers = self.checkers.get_whites() if self.turn == 1 else self.checkers.get_blacks()
-        checkers_with_move = tuple(
-            checker for checker in checkers if len(self.checkers.get_moves(checker))
-        )
-        if len(checkers_with_move):
-            checker = choice(checkers_with_move)
-            self.clicked[1] = checker
-            x, y, *_ = choice(self.checkers.get_moves(checker))
-            self.move(x, y)
 
     def render_all(self):
         self.screen.fill(THECOLORS.get("white"))
@@ -234,12 +179,12 @@ class Game:
         blacks = self.checkers.get_blacks()
         if not len(whites) or not len(self.checkers.all_turns(1)):
             self.wins[2] += 1
-            self.init()
+            super().__init__()
         if not len(blacks) or not len(self.checkers.all_turns(2)):
             self.wins[1] += 1
-            self.init()
+            super().__init__()
         if self.turn_number[0] >= 19:
-            self.init()
+            super().__init__()
 
     def run(self):
         pygame.init()
