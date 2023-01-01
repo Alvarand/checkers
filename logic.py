@@ -49,3 +49,4 @@ class CheckersLogic:
             self.clicked[1] = checker
             x, y, *_ = choice(self.checkers.get_moves(checker))
             self.move(x, y)
+        self.clicked = [False, Checker(-1, -1, -1)]
