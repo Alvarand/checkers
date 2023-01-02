@@ -72,9 +72,10 @@ class Game(CheckersLogic):
             elif self.is_menu:
                 self.button = 0
             elif event.type == pygame.MOUSEBUTTONUP:
-                self.button = 0
                 self.event_click()
-                self.clicked = [False, Checker(-1, -1, -1)]
+                self.button = 0
+                if not self.can_eat_again:
+                    self.clicked[0] = False
             if event.type == pygame.MOUSEMOTION:
                 self.mouse_x, self.mouse_y = event.pos
         if self.is_bot and self.turn == 2:
@@ -82,7 +83,7 @@ class Game(CheckersLogic):
 
     def event_click(self):
         mouse_x, mouse_y = self.mouse_x // 64, self.mouse_y // 64
-        if self.button in (0, 1):
+        if self.button == 1:
             if not self.clicked[0]:
                 checker = self.checkers.get_checker(mouse_x, mouse_y)
                 checker_with_move = self.checkers.must_move(self.turn)
@@ -95,7 +96,7 @@ class Game(CheckersLogic):
                     self.clicked[1] = checker
             else:
                 self.move(mouse_x, mouse_y)
-        elif self.button == 3 and not self.can_eat_again:
+        elif not self.can_eat_again:
             self.clicked[0] = False
 
     def render_all(self):
@@ -122,7 +123,7 @@ class Game(CheckersLogic):
 
     def render_checker(self):
         cur_checkers = self.checkers.checkers[:]
-        if self.clicked[1] in cur_checkers and self.button == 1:
+        if self.clicked[0] and self.clicked[1] in cur_checkers and self.button == 1:
             cur_checkers.remove(self.clicked[1])
             checker_type = self.get_checker_type(self.clicked[1])
             self.screen.blit(checker_type, (self.mouse_x - 32, self.mouse_y - 32))
