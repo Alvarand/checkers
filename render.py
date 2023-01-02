@@ -89,11 +89,9 @@ class Game(CheckersLogic):
                 checker_with_move = self.checkers.must_move(self.turn)
                 if len(checker_with_move):
                     if checker in checker_with_move:
-                        self.clicked[0] = True
-                        self.clicked[1] = checker
+                        self.clicked = [True, checker]
                 elif isinstance(checker, Checker) and checker.color == self.turn:
-                    self.clicked[0] = True
-                    self.clicked[1] = checker
+                    self.clicked = [True, checker]
             else:
                 self.move(mouse_x, mouse_y)
         elif not self.can_eat_again:
